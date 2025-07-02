@@ -3,6 +3,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+/nginx-1.18.0/
+*.logup
 
 ### STS ###
 .apt_generated
