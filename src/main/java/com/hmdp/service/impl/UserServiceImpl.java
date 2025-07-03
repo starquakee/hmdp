@@ -29,6 +29,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         String code = RandomUtil.randomNumbers(6);
         session.setAttribute("code", code);
+        session.setAttribute("phone", phone);
         log.debug("发送短信成功，验证码为：{}", code);
         return Result.ok();
     }
@@ -41,6 +42,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         String code = (String) session.getAttribute("code");
         if(code == null || !code.equals(loginForm.getCode())){
             return Result.fail("验证码错误!");
+        }
+        String phone = (String) session.getAttribute("phone");
+        if(phone == null || !phone.equals(loginForm.getPhone())){
+            return Result.fail("手机号错误!");
         }
         User user = query().eq("phone", loginForm.getPhone()).one();
         if(user == null){
