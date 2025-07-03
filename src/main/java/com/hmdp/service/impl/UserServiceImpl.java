@@ -75,6 +75,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public Result logout() {
+        // TODO 拦截器里将用户登陆token存入ThreadLocal，这里读取到token后在redis中将token删除
         return null;
     }
 
