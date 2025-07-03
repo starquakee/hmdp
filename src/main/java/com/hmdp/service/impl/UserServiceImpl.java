@@ -73,6 +73,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return Result.ok(token);
     }
 
+    @Override
+    public Result logout() {
+        return null;
+    }
+
     private User createUserWithPhone(String phone) {
         User user = new User();
         user.setPhone(phone);
