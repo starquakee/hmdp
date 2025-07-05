@@ -41,13 +41,13 @@ public class ShopController {
      * @param shop 商铺数据
      * @return 商铺id
      */
-    @PostMapping
-    public Result saveShop(@RequestBody Shop shop) {
-        // 写入数据库
-        shopService.save(shop);
-        // 返回店铺id
-        return Result.ok(shop.getId());
-    }
+//    @PostMapping
+//    public Result saveShop(@RequestBody Shop shop) {
+//        // 写入数据库
+//        shopService.save(shop);
+//        // 返回店铺id
+//        return Result.ok(shop.getId());
+//    }
 
     /**
      * 更新商铺信息
@@ -57,8 +57,7 @@ public class ShopController {
     @PutMapping
     public Result updateShop(@RequestBody Shop shop) {
         // 写入数据库
-        shopService.updateById(shop);
-        return Result.ok();
+        return shopService.update(shop);
     }
 
     /**
