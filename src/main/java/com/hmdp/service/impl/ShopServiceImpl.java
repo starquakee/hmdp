@@ -35,8 +35,12 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
             Shop shop = JSONUtil.toBean(shopJson, Shop.class);
             return Result.ok(shop);
         }
+        if(shopJson != null){
+            return Result.fail("店铺不存在");
+        }
         Shop shop = getById(id);
         if(shop == null){
+            stringRedisTemplate.opsForValue().set(key, "",2, TimeUnit.MINUTES);
             return Result.fail("店铺不存在");
         }
         stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(shop),30, TimeUnit.MINUTES);
