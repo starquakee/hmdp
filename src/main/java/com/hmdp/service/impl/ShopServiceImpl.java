@@ -40,12 +40,13 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
     public Result queryById(Long id) {
         //解决缓存穿透
 //        Shop shop = cacheClient.queryWithPassThrough("cache:shop:", id, Shop.class, this::getById
-//                , 10L, TimeUnit.SECONDS);
+//                , 10L, TimeUnit.MINUTES);
         //解决缓存击穿
-//        Shop shop = queryWithMutex(id);
+        Shop shop = queryWithMutex(id);
+        //逻辑过期需要提前向redis里预热！！！！！
 //        Shop shop = queryWithLogicalExpire(id);
-        Shop shop = cacheClient.queryWithLogicalExpire("cache:shop:", "lock:shop:"
-                , id, Shop.class, this::getById, 20L, TimeUnit.SECONDS);
+//        Shop shop = cacheClient.queryWithLogicalExpire("cache:shop:", "lock:shop:"
+//                , id, Shop.class, this::getById, 20L, TimeUnit.MINUTES);
         if(shop == null){
             return Result.fail("店铺不存在");
         }
@@ -125,7 +126,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
             //缓存已过期,需要缓存重载
             CACHE_REBUILD_EXECUTOR.submit(() -> {
                 try {
-                    saveShop2Redis(id, 20L);
+                    saveShop2Redis(id, 2000L);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }finally {
