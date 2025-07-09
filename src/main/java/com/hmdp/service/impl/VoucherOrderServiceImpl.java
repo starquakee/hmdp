@@ -9,6 +9,7 @@ import com.hmdp.service.IVoucherOrderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hmdp.utils.RedisIdWorker;
 import com.hmdp.utils.UserHolder;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +31,6 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
     @Resource
     private RedisIdWorker redisIdWorker;
     @Override
-    @Transactional
     public Result seckillVoucher(Long voucherId) {
         SeckillVoucher voucher = seckillVoucherService.getById(voucherId);
         if(voucher.getBeginTime().isAfter(LocalDateTime.now())) {
@@ -41,6 +41,21 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         }
         if(voucher.getStock() < 1) {
             return Result.fail("库存不足");
+        }
+        Long userId = UserHolder.getUser().getId();
+        synchronized (userId.toString().intern()){
+            //获取由事务而产生的代理对象
+            IVoucherOrderService proxy = (IVoucherOrderService) AopContext.currentProxy();
+            return proxy.createVoucherOrder(voucherId);
+        }
+    }
+
+    @Transactional
+    public Result createVoucherOrder(Long voucherId) {
+        Long userId = UserHolder.getUser().getId();
+        int count = query().eq("user_id", userId).eq("voucher_id", voucherId).count();
+        if(count > 0) {
+            return Result.fail("不能重复下单");
         }
         boolean success = seckillVoucherService.update()
                 .setSql("stock = stock-1")
@@ -53,7 +68,6 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         VoucherOrder voucherOrder = new VoucherOrder();
         long orderId = redisIdWorker.nextId("order");
         voucherOrder.setId(orderId);
-        long userId = UserHolder.getUser().getId();
         voucherOrder.setUserId(userId);
         voucherOrder.setVoucherId(voucherId);
         save(voucherOrder);
