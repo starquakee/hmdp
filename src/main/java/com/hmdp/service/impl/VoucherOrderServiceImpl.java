@@ -80,7 +80,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
             }
         });
     }
-    private void handlePendingList() {
+    private void handlePendingList() throws InterruptedException {
         while (true) {
             try {
                 List<MapRecord<String, Object, Object>> list = stringRedisTemplate.opsForStream().read(
@@ -96,6 +96,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
                 handleVoucherOrder(order);
                 stringRedisTemplate.opsForStream().acknowledge("stream.orders", "g1", record.getId());
             } catch (Exception e) {
+                Thread.sleep(50);
                 log.error("处理pending-list异常：", e);
             }
         }
