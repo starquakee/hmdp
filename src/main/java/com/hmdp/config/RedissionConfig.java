@@ -14,4 +14,16 @@ public class RedissionConfig {
         config.useSingleServer().setAddress("redis://localhost:6379").setPassword("030409");
         return Redisson.create(config);
     }
+//    @Bean
+//    public RedissonClient redissonClient2() {
+//        Config config = new Config();
+//        config.useSingleServer().setAddress("redis://localhost:6380");
+//        return Redisson.create(config);
+//    }
+//    @Bean
+//    public RedissonClient redissonClient3() {
+//        Config config = new Config();
+//        config.useSingleServer().setAddress("redis://localhost:6381");
+//        return Redisson.create(config);
+//    }
 }
