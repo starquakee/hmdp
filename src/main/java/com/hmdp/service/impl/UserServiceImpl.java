@@ -13,6 +13,7 @@ import com.hmdp.mapper.UserMapper;
 import com.hmdp.service.IUserService;
 import com.hmdp.utils.RegexUtils;
 import com.hmdp.utils.SystemConstants;
+import com.hmdp.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +76,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public Result logout() {
-        // TODO 拦截器里将用户登陆token存入ThreadLocal，这里读取到token后在redis中将token删除
+        String token = UserHolder.getToken();
+        stringRedisTemplate.delete("login:token:"+token);
+        return null;
+    }
+
+    @Override
+    public Result sign() {
         return null;
     }
 
