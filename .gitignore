@@ -5,7 +5,8 @@ target/
 !**/src/test/**/target/
 /nginx-1.18.0/
 *.log
-
+# 忽略所有以 ~ 结尾的备份文件
+*~
 ### STS ###
 .apt_generated
 .classpath
